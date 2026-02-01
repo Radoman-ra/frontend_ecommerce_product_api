@@ -1,199 +1,341 @@
 <template>
-  <div>
-    <div>
-      <div class="header">
-        <div class="auth-buttons">
-          <HomeButtons />
-        </div>
-      </div>
+  <div class="page-wrapper">
+    <HomeButtons />
+    
+    <main class="main-content">
+      <div class="marketplace-layout">
+        <!-- Filters Sidebar -->
+        <aside class="filters-sidebar" :class="{ 'is-open': isFiltersOpen }">
+          <div class="filters-header">
+            <h2 class="filters-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3"/>
+              </svg>
+              Filters
+            </h2>
+            <button class="filters-close" @click="isFiltersOpen = false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="filters-content">
+            <!-- Search -->
+            <div class="filter-group">
+              <label class="filter-label">Search</label>
+              <div class="search-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input
+                  v-model="productName"
+                  type="text"
+                  class="filter-input"
+                  placeholder="Product name..."
+                  @input="debounceSearchProducts"
+                />
+              </div>
+            </div>
 
-      <div class="marketplace-container">
-        <div class="filters">
-          <form class="search-form">
-            <h2>Search Filters</h2>
-            <input
-              v-model="productName"
-              class="input-field"
-              placeholder="Product Name"
-              @input="debounceSearchProducts"
-            />
-            <input
-              v-model="creationDateFrom"
-              class="input-field"
-              placeholder="Creation Date From"
-              type="date"
-              @input="debounceSearchProducts"
-            />
-            <input
-              v-model="creationDateTo"
-              class="input-field"
-              placeholder="Creation Date To"
-              type="date"
-              @input="debounceSearchProducts"
-            />
-            <input
-              v-model="categoryName"
-              class="input-field"
-              placeholder="Category Name"
-              @input="debounceSearchProducts"
-            />
-            <input
-              v-model="supplierName"
-              class="input-field"
-              placeholder="Supplier Name"
-              @input="debounceSearchProducts"
-            />
-            <input
-              v-model="minPrice"
-              class="input-field"
-              placeholder="Min Price"
-              type="number"
-              @input="debounceSearchProducts"
-            />
-            <input
-              v-model="maxPrice"
-              class="input-field"
-              placeholder="Max Price"
-              type="number"
-              @input="debounceSearchProducts"
-            />
-          </form>
-        </div>
+            <!-- Category -->
+            <div class="filter-group">
+              <label class="filter-label">Category</label>
+              <input
+                v-model="categoryName"
+                type="text"
+                class="filter-input"
+                placeholder="Category name..."
+                @input="debounceSearchProducts"
+              />
+            </div>
 
-        <div class="products">
-          <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+            <!-- Supplier -->
+            <div class="filter-group">
+              <label class="filter-label">Supplier</label>
+              <input
+                v-model="supplierName"
+                type="text"
+                class="filter-input"
+                placeholder="Supplier name..."
+                @input="debounceSearchProducts"
+              />
+            </div>
 
-          <div v-if="products.length && !errorMessage" class="product-grid">
-            <div
-              v-for="product in products"
-              :key="product.id"
+            <!-- Price Range -->
+            <div class="filter-group">
+              <label class="filter-label">Price Range</label>
+              <div class="price-inputs">
+                <div class="price-input-wrapper">
+                  <span class="currency">$</span>
+                  <input
+                    v-model="minPrice"
+                    type="number"
+                    class="filter-input price-input"
+                    placeholder="Min"
+                    @input="debounceSearchProducts"
+                  />
+                </div>
+                <span class="price-separator">—</span>
+                <div class="price-input-wrapper">
+                  <span class="currency">$</span>
+                  <input
+                    v-model="maxPrice"
+                    type="number"
+                    class="filter-input price-input"
+                    placeholder="Max"
+                    @input="debounceSearchProducts"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Date Range -->
+            <div class="filter-group">
+              <label class="filter-label">Added Date</label>
+              <div class="date-inputs">
+                <input
+                  v-model="creationDateFrom"
+                  type="date"
+                  class="filter-input"
+                  @input="debounceSearchProducts"
+                />
+                <input
+                  v-model="creationDateTo"
+                  type="date"
+                  class="filter-input"
+                  @input="debounceSearchProducts"
+                />
+              </div>
+            </div>
+
+            <!-- Clear Filters -->
+            <button class="btn-clear-filters" @click="clearFilters">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              </svg>
+              Clear Filters
+            </button>
+          </div>
+        </aside>
+
+        <!-- Products Section -->
+        <section class="products-section">
+          <!-- Mobile Filter Toggle -->
+          <button class="mobile-filter-toggle" @click="isFiltersOpen = true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3"/>
+            </svg>
+            Filters
+          </button>
+
+          <!-- Results Header -->
+          <div class="results-header">
+            <p class="results-count" v-if="products.length">
+              {{ products.length }} product{{ products.length > 1 ? 's' : '' }} found
+            </p>
+          </div>
+
+          <!-- Error/Empty State -->
+          <transition name="fade">
+            <div v-if="errorMessage" class="empty-state">
+              <div class="empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </div>
+              <h3>{{ errorMessage }}</h3>
+              <p>Try adjusting your search or filters</p>
+            </div>
+          </transition>
+
+          <!-- Products Grid -->
+          <TransitionGroup 
+            name="products" 
+            tag="div" 
+            class="products-grid"
+            v-if="products.length && !errorMessage"
+          >
+            <div 
+              v-for="(product, index) in products" 
+              :key="product.id" 
               class="product-card"
+              :style="{ '--delay': (index % 12) * 0.05 + 's' }"
               @click="openModal(product)"
             >
-              <div class="image-container">
+              <div class="product-image-wrapper">
                 <img
-                  :class="{ blurred: loading }"
                   :src="loading ? product.lowQltyImgUrl : product.imageUrl"
-                  alt="Product Image"
+                  :alt="product.name"
                   class="product-image"
+                  :class="{ 'is-loading': loading }"
                   @load="loading = false"
                 />
-                <span v-if="getCartQuantity(product.id) > 0" class="cart-tag">In Cart</span>
-                <span v-if="product.availableQuantity === 0" class="outofstock-tag"
-                  >Out of stock</span
-                >
+                
+                <!-- Tags -->
+                <div class="product-tags">
+                  <span v-if="getCartQuantity(product.id) > 0" class="tag tag-cart">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                    In Cart
+                  </span>
+                  <span v-if="product.availableQuantity === 0" class="tag tag-out">
+                    Out of Stock
+                  </span>
+                </div>
               </div>
-
-              <h3 class="product-name">{{ product.name }}</h3>
-              <p class="product-price">${{ product.price }}</p>
+              
+              <div class="product-content">
+                <h3 class="product-name">{{ product.name }}</h3>
+                <p class="product-price">${{ product.price.toFixed(2) }}</p>
+              </div>
             </div>
-          </div>
+          </TransitionGroup>
 
+          <!-- Pagination -->
           <div v-if="products.length && !errorMessage && totalPages > 1" class="pagination">
-            <select
-              id="limit"
-              v-model.number="limit"
-              class="input-field"
-              @change="debounceSearchProducts"
-            >
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="20">20</option>
-              <option :value="30">30</option>
-              <option :value="50">50</option>
-            </select>
-            <div class="nav-btn-prev">
-              <button
+            <div class="pagination-info">
+              <select
+                v-model.number="limit"
+                class="limit-select"
+                @change="debounceSearchProducts"
+              >
+                <option :value="5">5 per page</option>
+                <option :value="10">10 per page</option>
+                <option :value="20">20 per page</option>
+                <option :value="30">30 per page</option>
+                <option :value="50">50 per page</option>
+              </select>
+            </div>
+            
+            <div class="pagination-controls">
+              <button 
+                class="pagination-btn"
                 :disabled="currentPage === 1"
-                class="pagination-btn first"
                 @click="goToPage(1)"
               >
-                First
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="11,17 6,12 11,7"/>
+                  <polyline points="18,17 13,12 18,7"/>
+                </svg>
               </button>
-              <button :disabled="currentPage === 1" class="pagination-btn prev" @click="prevPage">
-                &#8592;
+              
+              <button 
+                class="pagination-btn"
+                :disabled="currentPage === 1"
+                @click="prevPage"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="15,18 9,12 15,6"/>
+                </svg>
               </button>
-            </div>
-            <div class="nav-page">
-              <label class="pagination-label">{{ currentPage }} / {{ totalPages }}</label>
-            </div>
-            <div class="nav-btn-next">
-              <button
+              
+              <span class="pagination-current">{{ currentPage }} / {{ totalPages }}</span>
+              
+              <button 
+                class="pagination-btn"
                 :disabled="currentPage === totalPages"
-                class="pagination-btn next"
                 @click="nextPage"
               >
-                &rarr;
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9,18 15,12 9,6"/>
+                </svg>
               </button>
-              <button
+              
+              <button 
+                class="pagination-btn"
                 :disabled="currentPage === totalPages"
-                class="pagination-btn last"
                 @click="goToPage(totalPages)"
               >
-                Last
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="13,17 18,12 13,7"/>
+                  <polyline points="6,17 11,12 6,7"/>
+                </svg>
               </button>
             </div>
           </div>
-        </div>
+        </section>
       </div>
 
-      <div
-        v-if="showModal"
-        aria-modal="true"
-        class="modal"
-        role="dialog"
-        tabindex="-1"
-        @click="closeModal"
-      >
-        <div class="modal-content" @click.stop>
-          <span aria-label="Close modal" class="close" role="button" @click="closeModal"
-            >&times;</span
+      <!-- Product Modal -->
+      <Teleport to="body">
+        <transition name="modal">
+          <div 
+            v-if="showModal" 
+            class="modal-overlay"
+            @click="closeModal"
           >
-          <div class="modal-main">
-            <img
-              :class="{ blurred: loading }"
-              :src="loading ? selectedProduct.lowQltyImgUrl : selectedProduct.imageUrl"
-              alt="Product Image"
-              class="modal-product-image"
-              @load="loading = false"
-            />
-            <div class="modal-info">
-              <h2 class="modal-title">{{ selectedProduct.name }}</h2>
-              <p class="modal-price">${{ selectedProduct.price }}</p>
-              <p>
-                <strong v-if="selectedProduct.availableQuantity > 0" class="modal-qty"
-                  >In Stock: {{ selectedProduct.availableQuantity }}</strong
-                >
-                <strong v-else class="modal-outofstock">Out of Stock</strong>
-              </p>
-              <div class="modal-description">
-                <label class="modal-description-label">Description:</label>
-                <p>{{ selectedProduct.description }}</p>
-              </div>
-              <div class="cart-section">
-                <button
-                  v-if="!(selectedProduct.availableQuantity == 0)"
-                  class="btn add-cart-btn"
-                  @click="addToCart(selectedProduct)"
-                >
-                  <div>Add to Cart</div>
-                </button>
+            <div class="modal-content" @click.stop>
+              <button class="modal-close" @click="closeModal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+              
+              <div class="modal-body">
+                <div class="modal-image-wrapper">
+                  <img
+                    :src="selectedProduct.imageUrl"
+                    :alt="selectedProduct.name"
+                    class="modal-image"
+                  />
+                </div>
+                
+                <div class="modal-details">
+                  <h2 class="modal-title">{{ selectedProduct.name }}</h2>
+                  <p class="modal-price">${{ selectedProduct.price?.toFixed(2) }}</p>
+                  
+                  <div class="stock-badge" :class="selectedProduct.availableQuantity > 0 ? 'in-stock' : 'out-stock'">
+                    <svg v-if="selectedProduct.availableQuantity > 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                    <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    {{ selectedProduct.availableQuantity > 0 ? `In Stock: ${selectedProduct.availableQuantity}` : 'Out of Stock' }}
+                  </div>
+                  
+                  <div class="modal-description">
+                    <h4>Description</h4>
+                    <p>{{ selectedProduct.description }}</p>
+                  </div>
+                  
+                  <button 
+                    v-if="selectedProduct.availableQuantity > 0"
+                    class="btn-add-cart"
+                    @click="addToCart(selectedProduct)"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="9" cy="21" r="1"/>
+                      <circle cx="20" cy="21" r="1"/>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </transition>
+      </Teleport>
+    </main>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref, onMounted } from 'vue'
 import axios from 'axios'
 import HomeButtons from './HomeButtons.vue'
 
 const apiUrl = import.meta.env.VITE_BACKEND_URL
-console.log({ apiUrl })
 
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number) {
   let timeout: ReturnType<typeof setTimeout> | undefined
@@ -232,6 +374,7 @@ export default defineComponent({
       limit: 10,
       errorMessage: '',
       showModal: false,
+      isFiltersOpen: false,
       selectedProduct: {} as {
         id: number
         name: string
@@ -282,11 +425,11 @@ export default defineComponent({
         )
         this.totalPages = response.data.total_pages
         if (!this.products.length) {
-          this.errorMessage = 'No products found matching the criteria'
+          this.errorMessage = 'No products found'
         }
       } catch (error: any) {
         if (error.response && error.response.status === 404) {
-          this.errorMessage = 'No products found matching the criteria'
+          this.errorMessage = 'No products found'
         } else {
           this.errorMessage = 'Error fetching products'
         }
@@ -294,31 +437,52 @@ export default defineComponent({
     },
 
     debounceSearchProducts: debounce(function (this: any) {
+      this.currentPage = 1
       this.searchProducts()
     }, 500),
+
+    clearFilters() {
+      this.productName = ''
+      this.categoryName = ''
+      this.supplierName = ''
+      this.minPrice = ''
+      this.maxPrice = ''
+      this.creationDateFrom = ''
+      this.creationDateTo = ''
+      this.currentPage = 1
+      this.searchProducts()
+    },
+
     goToPage(page: number) {
       this.currentPage = page
-      this.debounceSearchProducts()
+      this.searchProducts()
     },
+
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++
-        this.debounceSearchProducts()
+        this.searchProducts()
       }
     },
+
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--
-        this.debounceSearchProducts()
+        this.searchProducts()
       }
     },
+
     openModal(product: any) {
       this.selectedProduct = product
       this.showModal = true
+      document.body.style.overflow = 'hidden'
     },
+
     closeModal() {
       this.showModal = false
+      document.body.style.overflow = ''
     },
+
     addToCart(product: any) {
       const cartItem = this.cart.find((item: any) => item.id === product.id)
       if (!cartItem) {
@@ -327,11 +491,14 @@ export default defineComponent({
         cartItem.quantity += 1
       }
       localStorage.setItem('cart', JSON.stringify(this.cart))
+      this.closeModal()
     },
+
     getCartQuantity(productId: number) {
       return this.cart.filter((p: any) => p.id === productId).length
     }
   },
+
   mounted() {
     this.searchProducts()
   }
@@ -339,407 +506,680 @@ export default defineComponent({
 </script>
 
 <style scoped>
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f7f9;
-  color: #333;
+.page-wrapper {
+  min-height: 100vh;
+  padding-top: 80px;
 }
 
-.auth-buttons {
-  margin: auto;
-  display: flex;
-  justify-content: flex-end;
-  max-width: 80rem;
+.main-content {
+  padding: var(--space-lg);
 }
 
-.header {
-  margin-top: 6rem;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.cart-section {
-  display: flex;
-}
-
-.modal-description-label {
-  font-weight: 550;
-}
-
-.modal-price {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  color: #616e70;
-}
-
-.modal-qty {
-  margin-bottom: 10px;
-}
-
-.modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  max-width: 700px;
-  width: 90%;
-  position: relative;
-}
-
-.modal-main {
-  display: flex;
-}
-
-.modal-title {
-  font-weight: 600;
-  font-size: 1.5rem;
-}
-
-.modal-outofstock {
-  color: red;
-}
-
-.modal-product-image {
-  max-width: 250px;
-  max-height: 250px;
-  height: auto;
-  border-radius: 8px;
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #555;
-}
-
-.close:hover {
-  color: #f00;
-}
-
-.btn.add-cart-btn {
-  background-color: #28a745;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  width: 100%;
-  margin-bottom: auto;
-}
-
-.modal-info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px 10px 0px 10px;
-}
-
-.btn.add-cart-btn:hover {
-  background-color: #218838;
-}
-
-.marketplace-container {
-  min-height: 80vh;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  margin: auto;
-  max-width: 80rem;
-  height: 100%;
-  display: flex;
-  position: relative;
-}
-
-.add_to_cart_button {
-  display: flex;
-  flex-direction: row;
-}
-
-.filters {
-  margin-top: 0.5%;
-  height: auto;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  border-right: 2px solid #ddd;
-  overflow-y: auto;
-  overflow-x: hidden;
-  width: 30%;
-}
-
-.search-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-field {
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.btn {
-  padding: 10px;
-  margin: 10px 0;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.search-btn {
-  background-color: #1e90ff;
-}
-
-.pagination {
-  padding-top: 10px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding-bottom: 10px;
-  margin-top: auto;
-  max-width: 100%;
-}
-
-.pagination-btn {
-  background-color: #007bff;
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  margin: 0 5px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
-
-.pagination-btn:disabled {
-  background-color: #c0c0c0;
-  cursor: not-allowed;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
-.pagination-label {
-  font-weight: bold;
-  font-size: 16px;
-  color: #333;
-  min-width: 80px;
-  text-align: center;
-}
-
-.nav-btn-prev,
-.nav-btn-next {
-  display: flex;
-  align-items: center;
-}
-
-@media (max-width: 500px) {
-  .pagination {
-    flex-direction: column;
-  }
-
-  .pagination-btn {
-    width: 100%;
-    margin: 5px 0;
-  }
-
-  .pagination-label {
-    margin: 10px 0;
-  }
-}
-
-.error-message {
-  color: rgb(105, 105, 105);
-  font-weight: bold;
-  font-size: 1.2em;
-  text-align: center;
-  margin: 20px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.nav-btn-prev,
-.nav-btn-next {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-
-.products {
-  width: 100%;
-  padding: 1rem;
-}
-
-.product-grid {
+.marketplace-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
-  width: 100%;
+  grid-template-columns: 280px 1fr;
+  gap: var(--space-xl);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Filters Sidebar */
+.filters-sidebar {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+  animation: fadeInLeft 0.5s ease;
+}
+
+.filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filters-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.filters-title svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+}
+
+.filters-close {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: var(--space-xs);
+}
+
+.filters-close svg {
+  width: 24px;
+  height: 24px;
+}
+
+.filters-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.filter-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.filter-input {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-base);
+}
+
+.filter-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.filter-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input-wrapper svg {
+  position: absolute;
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+}
+
+.search-input-wrapper .filter-input {
+  padding-left: 44px;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.price-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.currency {
+  position: absolute;
+  left: var(--space-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.price-input {
+  padding-left: var(--space-lg) !important;
+}
+
+.price-separator {
+  color: var(--color-text-muted);
+}
+
+.date-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.btn-clear-filters {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-clear-filters:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.btn-clear-filters svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Products Section */
+.products-section {
+  min-height: 60vh;
+}
+
+.mobile-filter-toggle {
+  display: none;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  margin-bottom: var(--space-md);
+}
+
+.mobile-filter-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.results-header {
+  margin-bottom: var(--space-lg);
+}
+
+.results-count {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl);
+  text-align: center;
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+}
+
+.empty-icon {
+  width: 100px;
+  height: 100px;
+  background: var(--color-bg-card);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-lg);
+  animation: float 3s ease-in-out infinite;
+}
+
+.empty-icon svg {
+  width: 50px;
+  height: 50px;
+  color: var(--color-text-muted);
+}
+
+.empty-state h3 {
+  margin-bottom: var(--space-sm);
+}
+
+.empty-state p {
+  color: var(--color-text-muted);
+}
+
+/* Products Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-lg);
 }
 
 .product-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 200px;
-  margin: 0 auto;
-  width: 100%;
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  animation: fadeInUp 0.5s ease backwards;
+  animation-delay: var(--delay);
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+}
+
+.product-image-wrapper {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
 }
 
 .product-image {
   width: 100%;
-  height: auto;
-  border-radius: 8px;
+  height: 100%;
+  object-fit: cover;
+  transition: all var(--transition-base);
 }
 
-.image-container {
-  min-height: 200px;
-  position: relative;
+.product-image.is-loading {
+  filter: blur(10px);
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.1);
+}
+
+.product-tags {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
   display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
-.cart-tag {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background-color: rgb(239, 246, 255);
-  color: rgba(37, 136, 223, 0.84);
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
-  z-index: 10;
+.tag {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
 }
 
-.outofstock-tag {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background-color: rgb(255, 239, 239);
-  color: rgba(223, 37, 37, 0.84);
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
-  z-index: 10;
+.tag svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tag-cart {
+  background: rgba(99, 102, 241, 0.9);
+  color: white;
+}
+
+.tag-out {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+}
+
+.product-content {
+  padding: var(--space-md);
 }
 
 .product-name {
-  margin-top: 20px;
-  text-align: left;
-  font-size: 1.2em;
-  margin-bottom: 10px;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .product-price {
-  font-weight: bold;
-  margin-top: 15px;
-  text-align: left;
-  color: #000000;
-  font-size: 1.1em;
-  margin-bottom: 10px;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.product-quantity {
-  margin-bottom: 15px;
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-xl);
+  padding: var(--space-md);
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
 
-.cart-quantity {
-  margin-top: 10px;
-  font-weight: bold;
-  color: green;
+.limit-select {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
 }
 
-.modal {
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pagination-current {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: 0 var(--space-md);
+}
+
+/* Modal */
+.modal-overlay {
   position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  padding: var(--space-lg);
 }
 
 .modal-content {
-  background-color: #fefefe;
-  margin: 10% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 40%;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
   position: relative;
 }
 
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+.modal-close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text);
   cursor: pointer;
+  z-index: 10;
+  transition: all var(--transition-base);
 }
 
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
+.modal-close:hover {
+  background: var(--color-error);
+  border-color: var(--color-error);
+  color: white;
+}
+
+.modal-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.modal-image-wrapper {
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.modal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-details {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.modal-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.modal-price {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  width: fit-content;
+}
+
+.stock-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.stock-badge.in-stock {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+}
+
+.stock-badge.out-stock {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-error);
+}
+
+.modal-description {
+  flex: 1;
+}
+
+.modal-description h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.modal-description p {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.btn-add-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: linear-gradient(135deg, var(--color-success), var(--color-success-light));
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 600;
   cursor: pointer;
+  transition: all var(--transition-base);
+  margin-top: auto;
 }
 
-@media (max-width: 768px) {
-  .products {
-    width: 100%;
-    padding-left: 0;
-    margin-left: 0;
-  }
-
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
+.btn-add-cart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
 }
 
-@media (max-width: 480px) {
-  .products {
-    width: 100%;
-    padding-left: 0;
-    margin-left: 0;
-  }
+.btn-add-cart svg {
+  width: 20px;
+  height: 20px;
+}
 
-  .product-grid {
+/* Animations */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.products-enter-active {
+  transition: all 0.5s ease;
+}
+
+.products-leave-active {
+  transition: all 0.3s ease;
+  position: absolute;
+}
+
+.products-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.products-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal-content,
+.modal-leave-to .modal-content {
+  transform: scale(0.9);
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+  .marketplace-layout {
     grid-template-columns: 1fr;
   }
-
-  .filters {
-    width: 100%;
-    position: relative;
-    height: auto;
-    border-right: none;
+  
+  .filters-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 200;
+    border-radius: 0;
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
   }
+  
+  .filters-sidebar.is-open {
+    transform: translateX(0);
+  }
+  
+  .filters-close {
+    display: block;
+  }
+  
+  .mobile-filter-toggle {
+    display: flex;
+  }
+  
+  .modal-body {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-image-wrapper {
+    max-height: 300px;
+  }
+}
 
-  .blurred {
-    filter: blur(10px);
-    transition: filter 0.3s ease-out;
+@media (max-width: 640px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  
+  .pagination {
+    flex-direction: column;
+    gap: var(--space-md);
   }
 }
 </style>
