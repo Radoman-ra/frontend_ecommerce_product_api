@@ -874,12 +874,18 @@ export default defineComponent({
 
 .limit-select {
   padding: var(--space-sm) var(--space-md);
-  background: var(--color-bg-card);
+  background: #1a1a2e;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  color: var(--color-text);
+  color: #f8fafc;
   font-size: var(--font-size-sm);
   cursor: pointer;
+}
+
+.limit-select option {
+  background: #1a1a2e;
+  color: #f8fafc;
+  padding: 8px;
 }
 
 .pagination-controls {
