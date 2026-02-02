@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrapper">
     <HomeButtons />
-    
+
     <main class="main-content">
       <div class="marketplace-layout">
         <!-- Filters Sidebar -->
@@ -9,26 +9,26 @@
           <div class="filters-header">
             <h2 class="filters-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3"/>
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3" />
               </svg>
               Filters
             </h2>
             <button class="filters-close" @click="isFiltersOpen = false">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
           </div>
-          
+
           <div class="filters-content">
             <!-- Search -->
             <div class="filter-group">
               <label class="filter-label">Search</label>
               <div class="search-input-wrapper">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
                 <input
                   v-model="productName"
@@ -74,18 +74,17 @@
                     v-model="minPrice"
                     type="number"
                     class="filter-input price-input"
-                    placeholder="Min"
+                    placeholder="Min price"
                     @input="debounceSearchProducts"
                   />
                 </div>
-                <span class="price-separator">—</span>
                 <div class="price-input-wrapper">
                   <span class="currency">$</span>
                   <input
                     v-model="maxPrice"
                     type="number"
                     class="filter-input price-input"
-                    placeholder="Max"
+                    placeholder="Max price"
                     @input="debounceSearchProducts"
                   />
                 </div>
@@ -114,9 +113,9 @@
             <!-- Clear Filters -->
             <button class="btn-clear-filters" @click="clearFilters">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18"/>
-                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                <path d="M3 6h18" />
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
               </svg>
               Clear Filters
             </button>
@@ -128,7 +127,7 @@
           <!-- Mobile Filter Toggle -->
           <button class="mobile-filter-toggle" @click="isFiltersOpen = true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3"/>
+              <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3" />
             </svg>
             Filters
           </button>
@@ -145,8 +144,8 @@
             <div v-if="errorMessage" class="empty-state">
               <div class="empty-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </div>
               <h3>{{ errorMessage }}</h3>
@@ -155,15 +154,15 @@
           </transition>
 
           <!-- Products Grid -->
-          <TransitionGroup 
-            name="products" 
-            tag="div" 
+          <TransitionGroup
+            name="products"
+            tag="div"
             class="products-grid"
             v-if="products.length && !errorMessage"
           >
-            <div 
-              v-for="(product, index) in products" 
-              :key="product.id" 
+            <div
+              v-for="(product, index) in products"
+              :key="product.id"
               class="product-card"
               :style="{ '--delay': (index % 12) * 0.05 + 's' }"
               @click="openModal(product)"
@@ -176,12 +175,12 @@
                   :class="{ 'is-loading': loading }"
                   @load="loading = false"
                 />
-                
+
                 <!-- Tags -->
                 <div class="product-tags">
                   <span v-if="getCartQuantity(product.id) > 0" class="tag tag-cart">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="20,6 9,17 4,12"/>
+                      <polyline points="20,6 9,17 4,12" />
                     </svg>
                     In Cart
                   </span>
@@ -190,7 +189,7 @@
                   </span>
                 </div>
               </div>
-              
+
               <div class="product-content">
                 <h3 class="product-name">{{ product.name }}</h3>
                 <p class="product-price">${{ product.price.toFixed(2) }}</p>
@@ -201,61 +200,49 @@
           <!-- Pagination -->
           <div v-if="products.length && !errorMessage && totalPages > 1" class="pagination">
             <div class="pagination-info">
-              <select
-                v-model.number="limit"
-                class="limit-select"
-                @change="debounceSearchProducts"
-              >
-                <option :value="5">5 per page</option>
-                <option :value="10">10 per page</option>
+              <select v-model.number="limit" class="limit-select" @change="debounceSearchProducts">
+                <option :value="4">4 per page</option>
+                <option :value="8">8 per page</option>
+                <option :value="12">12 per page</option>
+                <option :value="16">16 per page</option>
                 <option :value="20">20 per page</option>
-                <option :value="30">30 per page</option>
-                <option :value="50">50 per page</option>
               </select>
             </div>
-            
+
             <div class="pagination-controls">
-              <button 
-                class="pagination-btn"
-                :disabled="currentPage === 1"
-                @click="goToPage(1)"
-              >
+              <button class="pagination-btn" :disabled="currentPage === 1" @click="goToPage(1)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="11,17 6,12 11,7"/>
-                  <polyline points="18,17 13,12 18,7"/>
+                  <polyline points="11,17 6,12 11,7" />
+                  <polyline points="18,17 13,12 18,7" />
                 </svg>
               </button>
-              
-              <button 
-                class="pagination-btn"
-                :disabled="currentPage === 1"
-                @click="prevPage"
-              >
+
+              <button class="pagination-btn" :disabled="currentPage === 1" @click="prevPage">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="15,18 9,12 15,6"/>
+                  <polyline points="15,18 9,12 15,6" />
                 </svg>
               </button>
-              
+
               <span class="pagination-current">{{ currentPage }} / {{ totalPages }}</span>
-              
-              <button 
+
+              <button
                 class="pagination-btn"
                 :disabled="currentPage === totalPages"
                 @click="nextPage"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9,18 15,12 9,6"/>
+                  <polyline points="9,18 15,12 9,6" />
                 </svg>
               </button>
-              
-              <button 
+
+              <button
                 class="pagination-btn"
                 :disabled="currentPage === totalPages"
                 @click="goToPage(totalPages)"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="13,17 18,12 13,7"/>
-                  <polyline points="6,17 11,12 6,7"/>
+                  <polyline points="13,17 18,12 13,7" />
+                  <polyline points="6,17 11,12 6,7" />
                 </svg>
               </button>
             </div>
@@ -266,19 +253,15 @@
       <!-- Product Modal -->
       <Teleport to="body">
         <transition name="modal">
-          <div 
-            v-if="showModal" 
-            class="modal-overlay"
-            @click="closeModal"
-          >
+          <div v-if="showModal" class="modal-overlay" @click="closeModal">
             <div class="modal-content" @click.stop>
               <button class="modal-close" @click="closeModal">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
-              
+
               <div class="modal-body">
                 <div class="modal-image-wrapper">
                   <img
@@ -287,36 +270,55 @@
                     class="modal-image"
                   />
                 </div>
-                
+
                 <div class="modal-details">
                   <h2 class="modal-title">{{ selectedProduct.name }}</h2>
                   <p class="modal-price">${{ selectedProduct.price?.toFixed(2) }}</p>
-                  
-                  <div class="stock-badge" :class="selectedProduct.availableQuantity > 0 ? 'in-stock' : 'out-stock'">
-                    <svg v-if="selectedProduct.availableQuantity > 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="20,6 9,17 4,12"/>
+
+                  <div
+                    class="stock-badge"
+                    :class="selectedProduct.availableQuantity > 0 ? 'in-stock' : 'out-stock'"
+                  >
+                    <svg
+                      v-if="selectedProduct.availableQuantity > 0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="20,6 9,17 4,12" />
                     </svg>
-                    <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="18" y1="6" x2="6" y2="18"/>
-                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    <svg
+                      v-else
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                    {{ selectedProduct.availableQuantity > 0 ? `In Stock: ${selectedProduct.availableQuantity}` : 'Out of Stock' }}
+                    {{
+                      selectedProduct.availableQuantity > 0
+                        ? `In Stock: ${selectedProduct.availableQuantity}`
+                        : 'Out of Stock'
+                    }}
                   </div>
-                  
+
                   <div class="modal-description">
                     <h4>Description</h4>
                     <p>{{ selectedProduct.description }}</p>
                   </div>
-                  
-                  <button 
+
+                  <button
                     v-if="selectedProduct.availableQuantity > 0"
                     class="btn-add-cart"
                     @click="addToCart(selectedProduct)"
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="9" cy="21" r="1"/>
-                      <circle cx="20" cy="21" r="1"/>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                      <circle cx="9" cy="21" r="1" />
+                      <circle cx="20" cy="21" r="1" />
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                     </svg>
                     Add to Cart
                   </button>
@@ -371,7 +373,7 @@ export default defineComponent({
       }>,
       currentPage: 1,
       totalPages: 0,
-      limit: 10,
+      limit: 12,
       errorMessage: '',
       showModal: false,
       isFiltersOpen: false,
@@ -629,12 +631,11 @@ export default defineComponent({
 
 .price-inputs {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-sm);
 }
 
 .price-input-wrapper {
-  flex: 1;
   position: relative;
 }
 
@@ -649,10 +650,7 @@ export default defineComponent({
 
 .price-input {
   padding-left: var(--space-lg) !important;
-}
-
-.price-separator {
-  color: var(--color-text-muted);
+  width: 100%;
 }
 
 .date-inputs {
@@ -1137,7 +1135,7 @@ export default defineComponent({
   .marketplace-layout {
     grid-template-columns: 1fr;
   }
-  
+
   .filters-sidebar {
     position: fixed;
     top: 0;
@@ -1148,24 +1146,26 @@ export default defineComponent({
     border-radius: 0;
     transform: translateX(-100%);
     transition: transform var(--transition-base);
+    background: var(--color-bg-secondary);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
   }
-  
+
   .filters-sidebar.is-open {
     transform: translateX(0);
   }
-  
+
   .filters-close {
     display: block;
   }
-  
+
   .mobile-filter-toggle {
     display: flex;
   }
-  
+
   .modal-body {
     grid-template-columns: 1fr;
   }
-  
+
   .modal-image-wrapper {
     max-height: 300px;
   }
@@ -1176,7 +1176,7 @@ export default defineComponent({
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-md);
   }
-  
+
   .pagination {
     flex-direction: column;
     gap: var(--space-md);

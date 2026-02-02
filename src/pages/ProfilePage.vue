@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrapper">
     <HomeButtons />
-    
+
     <main class="main-content">
       <div class="container">
         <!-- Profile Header -->
@@ -11,37 +11,39 @@
               <img v-if="avatarUrl" :src="avatarUrl" alt="Profile Avatar" class="avatar" />
               <div v-else class="avatar avatar-placeholder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
               </div>
               <label class="avatar-upload-btn">
                 <input type="file" accept="image/*" @change="onAvatarChange" />
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
+                  <path
+                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                  />
+                  <circle cx="12" cy="13" r="4" />
                 </svg>
               </label>
             </div>
-            
+
             <div class="profile-info">
               <h1 class="profile-title">My Profile</h1>
               <p class="profile-subtitle">Manage your account and view your orders</p>
             </div>
           </div>
-          
+
           <transition name="fade">
-            <button 
-              v-if="avatarFile" 
-              class="btn-upload" 
+            <button
+              v-if="avatarFile"
+              class="btn-upload"
               @click="uploadAvatar"
               :disabled="isUploading"
             >
               <span v-if="!isUploading">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17,8 12,3 7,8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17,8 12,3 7,8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
                 </svg>
                 Save Avatar
               </span>
@@ -53,9 +55,9 @@
         <transition name="fade">
           <div v-if="errorMessage" class="alert alert-error">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             <span>{{ errorMessage }}</span>
           </div>
@@ -66,12 +68,14 @@
           <div class="section-header">
             <h2 class="section-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-                <rect x="9" y="3" width="6" height="4" rx="1"/>
+                <path
+                  d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"
+                />
+                <rect x="9" y="3" width="6" height="4" rx="1" />
               </svg>
               My Orders
             </h2>
-            
+
             <!-- Filter -->
             <div class="filter-group">
               <select v-model="selectedStatus" class="filter-select" @change="fetchOrders">
@@ -89,16 +93,16 @@
             <div v-if="!orders.length && !isLoading" class="empty-state">
               <div class="empty-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                  <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
               </div>
               <h3>No orders yet</h3>
               <p>When you place orders, they will appear here</p>
               <button class="btn-primary" @click="$router.push('/')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="9" cy="21" r="1"/>
-                  <circle cx="20" cy="21" r="1"/>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                 </svg>
                 Start Shopping
               </button>
@@ -115,18 +119,28 @@
           </div>
 
           <!-- Orders List -->
-          <TransitionGroup name="list" tag="div" class="orders-list" v-if="orders.length && !isLoading">
-            <div v-for="(order, index) in orders" :key="order.id" class="order-card" :style="{ '--delay': index * 0.1 + 's' }">
+          <TransitionGroup
+            name="list"
+            tag="div"
+            class="orders-list"
+            v-if="orders.length && !isLoading"
+          >
+            <div
+              v-for="(order, index) in orders"
+              :key="order.id"
+              class="order-card"
+              :style="{ '--delay': index * 0.1 + 's' }"
+            >
               <!-- Order Header -->
               <div class="order-header">
                 <div class="order-info">
                   <span class="order-id">#{{ order.id }}</span>
                   <span class="order-date">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                      <line x1="16" y1="2" x2="16" y2="6"/>
-                      <line x1="8" y1="2" x2="8" y2="6"/>
-                      <line x1="3" y1="10" x2="21" y2="10"/>
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
                     </svg>
                     {{ formatDate(order.order_date) }}
                   </span>
@@ -140,8 +154,8 @@
               <!-- Progress Bar -->
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div 
-                    class="progress-fill" 
+                  <div
+                    class="progress-fill"
                     :class="getStatusClass(order.status)"
                     :style="getProgressStyle(order.status)"
                   ></div>
@@ -164,19 +178,25 @@
 
               <!-- Products -->
               <div class="products-list">
-                <div 
-                  v-for="product in order.products" 
-                  :key="product.product_id" 
+                <div
+                  v-for="product in order.products"
+                  :key="product.product_id"
                   class="product-item"
                 >
                   <template v-if="product.details">
-                    <img :src="product.details.pictureName" :alt="product.details.name" class="product-image" />
+                    <img
+                      :src="product.details.pictureName"
+                      :alt="product.details.name"
+                      class="product-image"
+                    />
                     <div class="product-info">
                       <h4 class="product-name">{{ product.details.name }}</h4>
                       <span class="product-category">{{ product.details.category.name }}</span>
                     </div>
                     <div class="product-qty">x{{ product.quantity }}</div>
-                    <div class="product-price">${{ (product.details.price * product.quantity).toFixed(2) }}</div>
+                    <div class="product-price">
+                      ${{ (product.details.price * product.quantity).toFixed(2) }}
+                    </div>
                   </template>
                   <template v-else>
                     <div class="skeleton skeleton-product"></div>
@@ -200,29 +220,21 @@
 
           <!-- Pagination -->
           <div v-if="orders.length && totalPages > 1" class="pagination">
-            <button 
-              class="pagination-btn" 
-              :disabled="currentPage === 1"
-              @click="prevPage"
-            >
+            <button class="pagination-btn" :disabled="currentPage === 1" @click="prevPage">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="15,18 9,12 15,6"/>
+                <polyline points="15,18 9,12 15,6" />
               </svg>
             </button>
-            
+
             <div class="pagination-info">
               <span class="current-page">{{ currentPage }}</span>
               <span class="separator">/</span>
               <span class="total-pages">{{ totalPages }}</span>
             </div>
-            
-            <button 
-              class="pagination-btn" 
-              :disabled="currentPage === totalPages"
-              @click="nextPage"
-            >
+
+            <button class="pagination-btn" :disabled="currentPage === totalPages" @click="nextPage">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9,18 15,12 9,6"/>
+                <polyline points="9,18 15,12 9,6" />
               </svg>
             </button>
           </div>
@@ -242,12 +254,14 @@ export default defineComponent({
     HomeButtons
   },
   setup() {
-    const orders = ref<Array<{
-      id: number
-      status: string
-      order_date: string
-      products: Array<{ product_id: number; quantity: number; details?: any }>
-    }>>([])
+    const orders = ref<
+      Array<{
+        id: number
+        status: string
+        order_date: string
+        products: Array<{ product_id: number; quantity: number; details?: any }>
+      }>
+    >([])
     const currentPage = ref(1)
     const totalPages = ref(0)
     const errorMessage = ref('')
@@ -293,8 +307,8 @@ export default defineComponent({
 
     const getProgressStyle = (status: string) => {
       const progressMap: Record<string, string> = {
-        pending: '33%',
-        shipped: '66%',
+        pending: '10%',
+        shipped: '50%',
         delivered: '100%',
         cancelled: '100%'
       }
@@ -321,7 +335,7 @@ export default defineComponent({
         errorMessage.value = 'Please select an image file.'
         return
       }
-      
+
       isUploading.value = true
       const formData = new FormData()
       formData.append('file', avatarFile.value!)
@@ -894,25 +908,33 @@ export default defineComponent({
   background: rgba(245, 158, 11, 0.1);
   color: var(--color-warning);
 }
-.status-pending .status-dot { background: var(--color-warning); }
+.status-pending .status-dot {
+  background: var(--color-warning);
+}
 
 .status-shipped {
   background: rgba(59, 130, 246, 0.1);
   color: var(--color-info);
 }
-.status-shipped .status-dot { background: var(--color-info); }
+.status-shipped .status-dot {
+  background: var(--color-info);
+}
 
 .status-delivered {
   background: rgba(16, 185, 129, 0.1);
   color: var(--color-success);
 }
-.status-delivered .status-dot { background: var(--color-success); }
+.status-delivered .status-dot {
+  background: var(--color-success);
+}
 
 .status-cancelled {
   background: rgba(239, 68, 68, 0.1);
   color: var(--color-error);
 }
-.status-cancelled .status-dot { background: var(--color-error); }
+.status-cancelled .status-dot {
+  background: var(--color-error);
+}
 
 /* Progress Bar */
 .progress-container {
@@ -933,10 +955,18 @@ export default defineComponent({
   transition: width var(--transition-slow);
 }
 
-.progress-fill.status-pending { background: var(--color-warning); }
-.progress-fill.status-shipped { background: var(--color-info); }
-.progress-fill.status-delivered { background: var(--color-success); }
-.progress-fill.status-cancelled { background: var(--color-error); }
+.progress-fill.status-pending {
+  background: var(--color-warning);
+}
+.progress-fill.status-shipped {
+  background: var(--color-info);
+}
+.progress-fill.status-delivered {
+  background: var(--color-success);
+}
+.progress-fill.status-cancelled {
+  background: var(--color-error);
+}
 
 .progress-steps {
   display: flex;
@@ -1138,7 +1168,7 @@ export default defineComponent({
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: white;
   animation: spin 0.8s linear infinite;
@@ -1176,33 +1206,33 @@ export default defineComponent({
     flex-direction: column;
     text-align: center;
   }
-  
+
   .avatar-section {
     flex-direction: column;
   }
-  
+
   .section-header {
     flex-direction: column;
     gap: var(--space-md);
   }
-  
+
   .order-header {
     flex-direction: column;
     gap: var(--space-md);
   }
-  
+
   .order-info {
     flex-direction: column;
   }
-  
+
   .product-item {
     flex-wrap: wrap;
   }
-  
+
   .product-info {
     flex: 1 1 calc(100% - 76px);
   }
-  
+
   .product-qty,
   .product-price {
     flex: 1 1 50%;
