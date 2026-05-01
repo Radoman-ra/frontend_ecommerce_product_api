@@ -1,30 +1,36 @@
 <template>
   <div class="callback-page">
-    <!-- Animated Background -->
-    <div class="bg-decoration">
+    <div class="bg-decoration" aria-hidden="true">
       <div class="orb orb-1"></div>
       <div class="orb orb-2"></div>
     </div>
 
     <div class="callback-container">
       <div class="callback-content">
-        <!-- Loading Animation -->
         <div class="loader-wrapper">
           <div class="loader">
             <div class="loader-ring"></div>
             <div class="loader-ring"></div>
             <div class="loader-ring"></div>
-            <svg class="loader-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
+            <svg
+              class="loader-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
             </svg>
           </div>
         </div>
-        
+
         <h1 class="callback-title">Signing you in</h1>
-        <p class="callback-message">Please wait while we complete your authentication...</p>
-        
-        <div class="progress-dots">
+        <p class="callback-message">
+          Please wait while we complete your authentication…
+        </p>
+
+        <div class="progress-dots" aria-hidden="true">
           <span class="dot"></span>
           <span class="dot"></span>
           <span class="dot"></span>
@@ -61,7 +67,6 @@ export default defineComponent({
           secure: true
         })
 
-        // Small delay for animation
         setTimeout(() => {
           router.push('/')
         }, 1500)
@@ -90,9 +95,9 @@ export default defineComponent({
   justify-content: center;
   position: relative;
   overflow: hidden;
+  padding: var(--space-lg);
 }
 
-/* Animated Background */
 .bg-decoration {
   position: absolute;
   inset: 0;
@@ -103,54 +108,51 @@ export default defineComponent({
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.5;
-  animation: float 20s ease-in-out infinite;
+  filter: blur(120px);
+  opacity: 0.35;
+  animation: orbDrift 20s ease-in-out infinite;
 }
 
 .orb-1 {
-  width: 500px;
-  height: 500px;
+  width: 460px;
+  height: 460px;
   background: var(--color-primary);
-  top: -150px;
-  left: -150px;
+  top: -140px;
+  left: -140px;
 }
 
 .orb-2 {
-  width: 400px;
-  height: 400px;
+  width: 380px;
+  height: 380px;
   background: var(--color-secondary);
-  bottom: -100px;
-  right: -100px;
-  animation-delay: -5s;
+  bottom: -120px;
+  right: -120px;
+  animation-delay: -6s;
 }
 
-/* Container */
 .callback-container {
   position: relative;
   z-index: 1;
   text-align: center;
-  animation: fadeIn 0.5s ease;
+  animation: scaleIn 0.4s ease;
 }
 
 .callback-content {
-  background: var(--color-bg-glass);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-3xl);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl) var(--space-3xl);
   box-shadow: var(--shadow-xl);
+  min-width: 320px;
 }
 
-/* Loader */
 .loader-wrapper {
   margin-bottom: var(--space-xl);
 }
 
 .loader {
-  width: 100px;
-  height: 100px;
+  width: 96px;
+  height: 96px;
   position: relative;
   margin: 0 auto;
 }
@@ -184,38 +186,34 @@ export default defineComponent({
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 36px;
-  height: 36px;
-  color: var(--color-primary-light);
+  width: 32px;
+  height: 32px;
+  color: var(--color-primary);
   animation: pulse 2s ease-in-out infinite;
 }
 
-/* Text */
 .callback-title {
   font-size: var(--font-size-2xl);
   font-weight: 700;
-  margin-bottom: var(--space-sm);
-  background: linear-gradient(135deg, var(--color-text), var(--color-text-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  letter-spacing: -0.015em;
+  margin-bottom: 6px;
 }
 
 .callback-message {
   color: var(--color-text-muted);
   margin-bottom: var(--space-lg);
+  font-size: var(--font-size-sm);
 }
 
-/* Progress Dots */
 .progress-dots {
   display: flex;
   justify-content: center;
-  gap: var(--space-sm);
+  gap: 8px;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background: var(--color-primary);
   border-radius: 50%;
   animation: bounce 1.4s ease-in-out infinite;
@@ -233,53 +231,11 @@ export default defineComponent({
   animation-delay: 0.4s;
 }
 
-/* Animations */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(0.95);
-  }
-}
-
-@keyframes bounce {
-  0%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-20px) rotate(5deg);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
+@media (max-width: 480px) {
+  .callback-content {
+    padding: var(--space-xl);
+    min-width: 0;
+    width: 100%;
   }
 }
 </style>

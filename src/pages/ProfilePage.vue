@@ -4,18 +4,22 @@
 
     <main class="main-content">
       <div class="container">
-        <!-- Profile Header -->
-        <div class="profile-header">
+        <section class="profile-header">
           <div class="avatar-section">
             <div class="avatar-wrapper">
-              <img v-if="avatarUrl" :src="avatarUrl" alt="Profile Avatar" class="avatar" />
+              <img
+                v-if="avatarUrl"
+                :src="avatarUrl"
+                alt="Profile avatar"
+                class="avatar"
+              />
               <div v-else class="avatar avatar-placeholder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
               </div>
-              <label class="avatar-upload-btn">
+              <label class="avatar-upload-btn" aria-label="Upload avatar">
                 <input type="file" accept="image/*" @change="onAvatarChange" />
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path
@@ -27,8 +31,9 @@
             </div>
 
             <div class="profile-info">
-              <h1 class="profile-title">My Profile</h1>
-              <p class="profile-subtitle">Manage your account and view your orders</p>
+              <span class="profile-eyebrow">Account</span>
+              <h1 class="profile-title">My profile</h1>
+              <p class="profile-subtitle">Manage your account details and view your orders.</p>
             </div>
           </div>
 
@@ -45,12 +50,12 @@
                   <polyline points="17,8 12,3 7,8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
                 </svg>
-                Save Avatar
+                Save avatar
               </span>
-              <span v-else class="loading-spinner"></span>
+              <span v-else class="loading-spinner" aria-hidden="true"></span>
             </button>
           </transition>
-        </div>
+        </section>
 
         <transition name="fade">
           <div v-if="errorMessage" class="alert alert-error">
@@ -63,32 +68,36 @@
           </div>
         </transition>
 
-        <!-- Orders Section -->
-        <div class="orders-section">
-          <div class="section-header">
+        <section class="orders-section">
+          <header class="section-header">
             <h2 class="section-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path
-                  d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"
-                />
-                <rect x="9" y="3" width="6" height="4" rx="1" />
-              </svg>
-              My Orders
+              <span class="section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"
+                  />
+                  <rect x="9" y="3" width="6" height="4" rx="1" />
+                </svg>
+              </span>
+              My orders
             </h2>
 
-            <!-- Filter -->
             <div class="filter-group">
-              <select v-model="selectedStatus" class="filter-select" @change="fetchOrders">
-                <option value="">All Orders</option>
+              <select
+                v-model="selectedStatus"
+                class="filter-select"
+                @change="fetchOrders"
+                aria-label="Filter orders"
+              >
+                <option value="">All orders</option>
                 <option value="Pending">Pending</option>
                 <option value="Shipped">Shipped</option>
                 <option value="Delivered">Delivered</option>
                 <option value="Cancelled">Cancelled</option>
               </select>
             </div>
-          </div>
+          </header>
 
-          <!-- Empty State -->
           <transition name="fade">
             <div v-if="!orders.length && !isLoading" class="empty-state">
               <div class="empty-icon">
@@ -97,19 +106,18 @@
                 </svg>
               </div>
               <h3>No orders yet</h3>
-              <p>When you place orders, they will appear here</p>
+              <p>When you place orders, they will appear here.</p>
               <button class="btn-primary" @click="$router.push('/')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="9" cy="21" r="1" />
                   <circle cx="20" cy="21" r="1" />
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                 </svg>
-                Start Shopping
+                Start shopping
               </button>
             </div>
           </transition>
 
-          <!-- Loading State -->
           <div v-if="isLoading" class="loading-state">
             <div class="skeleton-card" v-for="i in 3" :key="i">
               <div class="skeleton skeleton-header"></div>
@@ -118,23 +126,21 @@
             </div>
           </div>
 
-          <!-- Orders List -->
           <TransitionGroup
             name="list"
             tag="div"
             class="orders-list"
             v-if="orders.length && !isLoading"
           >
-            <div
+            <article
               v-for="(order, index) in orders"
               :key="order.id"
               class="order-card"
-              :style="{ '--delay': index * 0.1 + 's' }"
+              :style="{ '--delay': index * 0.08 + 's' }"
             >
-              <!-- Order Header -->
               <div class="order-header">
                 <div class="order-info">
-                  <span class="order-id">#{{ order.id }}</span>
+                  <span class="order-id">Order #{{ order.id }}</span>
                   <span class="order-date">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -151,7 +157,6 @@
                 </div>
               </div>
 
-              <!-- Progress Bar -->
               <div class="progress-container">
                 <div class="progress-bar">
                   <div
@@ -161,22 +166,30 @@
                   ></div>
                 </div>
                 <div class="progress-steps">
-                  <div class="step" :class="{ active: isStepActive(order.status, 'pending') }">
+                  <div
+                    class="step"
+                    :class="{ active: isStepActive(order.status, 'pending') }"
+                  >
                     <div class="step-dot"></div>
                     <span>Pending</span>
                   </div>
-                  <div class="step" :class="{ active: isStepActive(order.status, 'shipped') }">
+                  <div
+                    class="step"
+                    :class="{ active: isStepActive(order.status, 'shipped') }"
+                  >
                     <div class="step-dot"></div>
                     <span>Shipped</span>
                   </div>
-                  <div class="step" :class="{ active: isStepActive(order.status, 'delivered') }">
+                  <div
+                    class="step"
+                    :class="{ active: isStepActive(order.status, 'delivered') }"
+                  >
                     <div class="step-dot"></div>
                     <span>Delivered</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Products -->
               <div class="products-list">
                 <div
                   v-for="product in order.products"
@@ -191,9 +204,11 @@
                     />
                     <div class="product-info">
                       <h4 class="product-name">{{ product.details.name }}</h4>
-                      <span class="product-category">{{ product.details.category.name }}</span>
+                      <span class="product-category">
+                        {{ product.details.category.name }}
+                      </span>
                     </div>
-                    <div class="product-qty">x{{ product.quantity }}</div>
+                    <div class="product-qty">×{{ product.quantity }}</div>
                     <div class="product-price">
                       ${{ (product.details.price * product.quantity).toFixed(2) }}
                     </div>
@@ -204,23 +219,30 @@
                 </div>
               </div>
 
-              <!-- Order Footer -->
               <div class="order-footer">
                 <div class="supplier-info" v-if="order.products[0]?.details?.supplier">
                   <span class="supplier-label">Supplier</span>
-                  <span class="supplier-name">{{ order.products[0].details.supplier.name }}</span>
+                  <span class="supplier-name">
+                    {{ order.products[0].details.supplier.name }}
+                  </span>
                 </div>
                 <div class="order-total">
                   <span>Total</span>
-                  <span class="total-amount">${{ calculateOrderTotal(order).toFixed(2) }}</span>
+                  <span class="total-amount">
+                    ${{ calculateOrderTotal(order).toFixed(2) }}
+                  </span>
                 </div>
               </div>
-            </div>
+            </article>
           </TransitionGroup>
 
-          <!-- Pagination -->
           <div v-if="orders.length && totalPages > 1" class="pagination">
-            <button class="pagination-btn" :disabled="currentPage === 1" @click="prevPage">
+            <button
+              class="pagination-btn"
+              :disabled="currentPage === 1"
+              @click="prevPage"
+              aria-label="Previous page"
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="15,18 9,12 15,6" />
               </svg>
@@ -232,13 +254,18 @@
               <span class="total-pages">{{ totalPages }}</span>
             </div>
 
-            <button class="pagination-btn" :disabled="currentPage === totalPages" @click="nextPage">
+            <button
+              class="pagination-btn"
+              :disabled="currentPage === totalPages"
+              @click="nextPage"
+              aria-label="Next page"
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="9,18 15,12 9,6" />
               </svg>
             </button>
           </div>
-        </div>
+        </section>
       </div>
     </main>
   </div>
@@ -307,8 +334,8 @@ export default defineComponent({
 
     const getProgressStyle = (status: string) => {
       const progressMap: Record<string, string> = {
-        pending: '10%',
-        shipped: '50%',
+        pending: '15%',
+        shipped: '60%',
         delivered: '100%',
         cancelled: '100%'
       }
@@ -372,9 +399,12 @@ export default defineComponent({
       }
 
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/profile/avatar`, {
-          headers: { Authorization: `${token}` }
-        })
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/profile/avatar`,
+          {
+            headers: { Authorization: `${token}` }
+          }
+        )
         const pictureName = response.data.avatar_url
         avatarUrl.value = `${import.meta.env.VITE_BACKEND_URL}/static/avatars/${pictureName}`
       } catch (error: any) {
@@ -538,11 +568,11 @@ export default defineComponent({
 <style scoped>
 .page-wrapper {
   min-height: 100vh;
-  padding-top: 80px;
+  padding-top: var(--header-height);
 }
 
 .main-content {
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-2xl) var(--space-lg) var(--space-3xl);
 }
 
 .container {
@@ -557,11 +587,13 @@ export default defineComponent({
   justify-content: space-between;
   gap: var(--space-lg);
   padding: var(--space-xl);
-  background: var(--color-bg-glass);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   margin-bottom: var(--space-xl);
-  animation: fadeInDown 0.5s ease;
+  box-shadow: var(--shadow-sm);
+  animation: fadeInDown 0.4s ease;
+  flex-wrap: wrap;
 }
 
 .avatar-section {
@@ -575,45 +607,49 @@ export default defineComponent({
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--color-border);
-  transition: all var(--transition-base);
+  border: 3px solid var(--color-bg);
+  box-shadow: var(--shadow-md);
+  background: var(--color-surface-2);
 }
 
 .avatar-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-bg-card);
+  background: linear-gradient(135deg, var(--color-primary-soft), var(--color-surface-2));
+  color: var(--color-text-muted);
 }
 
 .avatar-placeholder svg {
-  width: 50px;
-  height: 50px;
-  color: var(--color-text-muted);
+  width: 44px;
+  height: 44px;
 }
 
 .avatar-upload-btn {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  bottom: -4px;
+  right: -4px;
+  width: 34px;
+  height: 34px;
+  background: var(--color-primary);
+  color: #fff;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 3px solid var(--color-bg);
+  border: 3px solid var(--color-surface);
   transition: all var(--transition-base);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .avatar-upload-btn:hover {
-  transform: scale(1.1);
+  background: var(--color-primary-hover);
+  transform: scale(1.08);
 }
 
 .avatar-upload-btn input {
@@ -621,75 +657,84 @@ export default defineComponent({
 }
 
 .avatar-upload-btn svg {
-  width: 16px;
-  height: 16px;
-  color: white;
+  width: 14px;
+  height: 14px;
 }
 
 .profile-info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 4px;
+}
+
+.profile-eyebrow {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .profile-title {
   font-size: var(--font-size-2xl);
   font-weight: 700;
+  letter-spacing: -0.015em;
 }
 
 .profile-subtitle {
   color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
 }
 
 .btn-upload {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-lg);
-  background: linear-gradient(135deg, var(--color-success), var(--color-success-light));
-  color: white;
-  border: none;
+  gap: 8px;
+  padding: 10px var(--space-lg);
+  background: var(--color-success);
+  color: #fff;
   border-radius: var(--radius-md);
-  font-weight: 500;
-  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
   transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-upload:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+  background: color-mix(in srgb, var(--color-success) 88%, black);
+  transform: translateY(-1px);
 }
 
 .btn-upload svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 /* Alert */
 .alert {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md);
+  gap: 10px;
+  padding: 12px 16px;
   border-radius: var(--radius-md);
   margin-bottom: var(--space-lg);
 }
 
 .alert svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 
 .alert-error {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: var(--color-error-light);
+  background: var(--color-error-soft);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
 }
 
-/* Orders Section */
+/* Section */
 .orders-section {
-  animation: fadeInUp 0.5s ease 0.2s backwards;
+  animation: fadeInUp 0.5s ease 0.15s backwards;
 }
 
 .section-header {
@@ -697,42 +742,53 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-md);
 }
 
 .section-title {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 12px;
   font-size: var(--font-size-xl);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-.section-title svg {
-  width: 24px;
-  height: 24px;
+.section-icon {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-soft);
   color: var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.section-icon svg {
+  width: 18px;
+  height: 18px;
 }
 
 .filter-select {
-  padding: var(--space-sm) var(--space-md);
-  background: #1a1a2e;
+  padding: 9px 14px;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  color: #f8fafc;
+  color: var(--color-text);
   font-size: var(--font-size-sm);
-  cursor: pointer;
+  font-weight: 500;
   transition: all var(--transition-base);
+}
+
+.filter-select:hover {
+  border-color: var(--color-border-strong);
 }
 
 .filter-select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-.filter-select option {
-  background: #1a1a2e;
-  color: #f8fafc;
-  padding: 8px;
+  box-shadow: var(--shadow-focus);
 }
 
 /* Empty State */
@@ -743,15 +799,15 @@ export default defineComponent({
   justify-content: center;
   padding: var(--space-3xl);
   text-align: center;
-  background: var(--color-bg-glass);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-2xl);
 }
 
 .empty-icon {
   width: 100px;
   height: 100px;
-  background: var(--color-bg-card);
+  background: var(--color-surface-2);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -767,7 +823,7 @@ export default defineComponent({
 }
 
 .empty-state h3 {
-  margin-bottom: var(--space-sm);
+  margin-bottom: 6px;
 }
 
 .empty-state p {
@@ -776,27 +832,27 @@ export default defineComponent({
 }
 
 .btn-primary {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-xl);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: white;
-  border: none;
+  gap: 8px;
+  padding: 12px var(--space-xl);
+  background: var(--color-primary);
+  color: #fff;
   border-radius: var(--radius-md);
   font-weight: 600;
-  cursor: pointer;
+  font-size: var(--font-size-base);
   transition: all var(--transition-base);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .btn-primary svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
 }
 
 /* Loading State */
@@ -807,32 +863,20 @@ export default defineComponent({
 }
 
 .skeleton-card {
-  background: var(--color-bg-glass);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-lg);
 }
 
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--color-bg-card) 25%,
-    var(--color-bg-glass) 50%,
-    var(--color-bg-card) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: var(--radius-sm);
-}
-
 .skeleton-header {
-  height: 24px;
+  height: 22px;
   width: 200px;
   margin-bottom: var(--space-md);
 }
 
 .skeleton-content {
-  height: 80px;
+  height: 70px;
   margin-bottom: var(--space-md);
 }
 
@@ -849,18 +893,21 @@ export default defineComponent({
 }
 
 .order-card {
-  background: var(--color-bg-glass);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
   animation: fadeInUp 0.5s ease backwards;
   animation-delay: var(--delay);
-  transition: all var(--transition-base);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .order-card:hover {
   border-color: var(--color-border-hover);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .order-header {
@@ -868,40 +915,45 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
 }
 
 .order-info {
   display: flex;
   align-items: center;
   gap: var(--space-md);
+  flex-wrap: wrap;
 }
 
 .order-id {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   font-weight: 700;
+  color: var(--color-text-strong);
 }
 
 .order-date {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 6px;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
 }
 
 .order-date svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .order-status {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-md);
+  gap: 6px;
+  padding: 5px 12px;
   border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: capitalize;
 }
 
 .status-dot {
@@ -911,7 +963,7 @@ export default defineComponent({
 }
 
 .status-pending {
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--color-warning-soft);
   color: var(--color-warning);
 }
 .status-pending .status-dot {
@@ -919,7 +971,7 @@ export default defineComponent({
 }
 
 .status-shipped {
-  background: rgba(59, 130, 246, 0.1);
+  background: var(--color-info-soft);
   color: var(--color-info);
 }
 .status-shipped .status-dot {
@@ -927,7 +979,7 @@ export default defineComponent({
 }
 
 .status-delivered {
-  background: rgba(16, 185, 129, 0.1);
+  background: var(--color-success-soft);
   color: var(--color-success);
 }
 .status-delivered .status-dot {
@@ -935,7 +987,7 @@ export default defineComponent({
 }
 
 .status-cancelled {
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--color-error-soft);
   color: var(--color-error);
 }
 .status-cancelled .status-dot {
@@ -948,8 +1000,8 @@ export default defineComponent({
 }
 
 .progress-bar {
-  height: 4px;
-  background: var(--color-border);
+  height: 6px;
+  background: var(--color-surface-2);
   border-radius: var(--radius-full);
   overflow: hidden;
   margin-bottom: var(--space-md);
@@ -983,51 +1035,61 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 6px;
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
+  font-weight: 500;
 }
 
 .step.active {
-  color: var(--color-text);
+  color: var(--color-text-strong);
 }
 
 .step-dot {
-  width: 12px;
-  height: 12px;
-  background: var(--color-border);
+  width: 10px;
+  height: 10px;
+  background: var(--color-surface-3);
   border-radius: 50%;
+  border: 2px solid var(--color-surface);
   transition: all var(--transition-base);
 }
 
 .step.active .step-dot {
   background: var(--color-primary);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
 }
 
 /* Products List */
 .products-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 4px;
   margin-bottom: var(--space-lg);
-  padding: var(--space-md);
-  background: var(--color-bg-card);
+  padding: 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
 
 .product-item {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-sm);
+  gap: 12px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.product-item:hover {
+  background: var(--color-surface-2);
 }
 
 .product-image {
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-sm);
   object-fit: cover;
+  background: var(--color-surface-2);
 }
 
 .product-info {
@@ -1037,10 +1099,11 @@ export default defineComponent({
 
 .product-name {
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--color-text-strong);
 }
 
 .product-category {
@@ -1051,12 +1114,14 @@ export default defineComponent({
 .product-qty {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
+  font-weight: 500;
 }
 
 .product-price {
-  font-weight: 600;
+  font-weight: 700;
   min-width: 80px;
   text-align: right;
+  color: var(--color-text-strong);
 }
 
 .skeleton-product {
@@ -1071,43 +1136,50 @@ export default defineComponent({
   justify-content: space-between;
   padding-top: var(--space-md);
   border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
 }
 
 .supplier-info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 2px;
 }
 
 .supplier-label {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .supplier-name {
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 .order-total {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: var(--space-xs);
+  gap: 2px;
 }
 
 .order-total span:first-child {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .total-amount {
   font-size: var(--font-size-xl);
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
 }
 
 /* Pagination */
@@ -1122,49 +1194,45 @@ export default defineComponent({
 .pagination-btn {
   width: 40px;
   height: 40px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-bg-card);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text);
-  cursor: pointer;
-  transition: all var(--transition-base);
+  transition: all var(--transition-fast);
 }
 
 .pagination-btn:hover:not(:disabled) {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: white;
+  color: #fff;
 }
 
 .pagination-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .pagination-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .pagination-info {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 6px;
   font-size: var(--font-size-sm);
+  font-weight: 600;
 }
 
 .current-page {
-  font-weight: 600;
-  color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
-.separator {
-  color: var(--color-text-muted);
-}
-
+.separator,
 .total-pages {
   color: var(--color-text-muted);
 }
@@ -1172,11 +1240,11 @@ export default defineComponent({
 /* Loading Spinner */
 .loading-spinner {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: white;
+  border-top-color: #fff;
   animation: spin 0.8s linear infinite;
 }
 
@@ -1208,6 +1276,10 @@ export default defineComponent({
 
 /* Responsive */
 @media (max-width: 640px) {
+  .main-content {
+    padding: var(--space-xl) var(--space-md);
+  }
+
   .profile-header {
     flex-direction: column;
     text-align: center;
@@ -1218,17 +1290,17 @@ export default defineComponent({
   }
 
   .section-header {
-    flex-direction: column;
-    gap: var(--space-md);
+    align-items: flex-start;
   }
 
   .order-header {
     flex-direction: column;
-    gap: var(--space-md);
+    align-items: flex-start;
   }
 
   .order-info {
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .product-item {
@@ -1236,7 +1308,7 @@ export default defineComponent({
   }
 
   .product-info {
-    flex: 1 1 calc(100% - 76px);
+    flex: 1 1 calc(100% - 64px);
   }
 
   .product-qty,

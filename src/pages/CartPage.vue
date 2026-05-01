@@ -1,72 +1,88 @@
 <template>
   <div class="page-wrapper">
     <HomeButtons />
-    
+
     <main class="main-content">
       <div class="container">
-        <!-- Page Header -->
-        <div class="page-header">
-          <h1 class="page-title">
+        <header class="page-header">
+          <div class="page-header-text">
+            <h1 class="page-title">
+              <span class="title-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+              </span>
+              Shopping cart
+            </h1>
+            <p class="page-subtitle" v-if="cartItems.length">
+              {{ cartItems.length }} item{{ cartItems.length > 1 ? 's' : '' }} in your cart
+            </p>
+            <p class="page-subtitle" v-else>Add items to start your order</p>
+          </div>
+          <button v-if="cartItems.length" class="btn-link" @click="goHome">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="9" cy="21" r="1"/>
-              <circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12,19 5,12 12,5" />
             </svg>
-            Shopping Cart
-          </h1>
-          <p class="page-subtitle" v-if="cartItems.length">{{ cartItems.length }} item{{ cartItems.length > 1 ? 's' : '' }} in your cart</p>
-        </div>
+            Continue shopping
+          </button>
+        </header>
 
-        <!-- Empty State -->
         <transition name="fade">
           <div v-if="cartItems.length === 0" class="empty-state">
             <div class="empty-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="9" cy="21" r="1"/>
-                <circle cx="20" cy="21" r="1"/>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
               </svg>
             </div>
             <h2>Your cart is empty</h2>
-            <p>Looks like you haven't added any items yet</p>
+            <p>Looks like you haven't added any items yet.</p>
             <button class="btn-primary" @click="goHome">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9,22 9,12 15,12 15,22"/>
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9,22 9,12 15,12 15,22" />
               </svg>
-              Start Shopping
+              Browse products
             </button>
           </div>
         </transition>
 
-        <!-- Cart Content -->
         <div v-if="cartItems.length > 0" class="cart-layout">
-          <!-- Cart Items -->
-          <div class="cart-items">
+          <section class="cart-items">
             <TransitionGroup name="list" tag="ul" class="items-list">
-              <li v-for="(item, index) in cartItems" :key="item.id" class="cart-item" :style="{ '--delay': index * 0.1 + 's' }">
+              <li
+                v-for="(item, index) in cartItems"
+                :key="item.id"
+                class="cart-item"
+                :style="{ '--delay': index * 0.07 + 's' }"
+              >
                 <div class="item-image">
                   <img :src="getImageUrl(item.photo_path)" :alt="item.name" />
                 </div>
-                
+
                 <div class="item-details">
                   <h3 class="item-name">{{ item.name }}</h3>
                   <p class="item-description">{{ item.description }}</p>
-                  
+
                   <div class="item-meta">
                     <span class="item-price">${{ item.price.toFixed(2) }}</span>
-                    
+
                     <div class="quantity-control">
-                      <button 
-                        class="qty-btn" 
+                      <button
+                        class="qty-btn"
                         @click="decreaseQuantity(item)"
                         :disabled="item.quantity <= 1"
+                        aria-label="Decrease quantity"
                       >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <line x1="5" y1="12" x2="19" y2="12"/>
+                          <line x1="5" y1="12" x2="19" y2="12" />
                         </svg>
                       </button>
-                      
+
                       <input
                         v-model.number="item.quantity"
                         type="number"
@@ -74,54 +90,64 @@
                         min="1"
                         class="qty-input"
                         @input="handleInput(item)"
+                        aria-label="Quantity"
                       />
-                      
-                      <button 
-                        class="qty-btn" 
+
+                      <button
+                        class="qty-btn"
                         @click="increaseQuantity(item)"
                         :disabled="item.quantity >= item.availableQuantity"
+                        aria-label="Increase quantity"
                       >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <line x1="12" y1="5" x2="12" y2="19"/>
-                          <line x1="5" y1="12" x2="19" y2="12"/>
+                          <line x1="12" y1="5" x2="12" y2="19" />
+                          <line x1="5" y1="12" x2="19" y2="12" />
                         </svg>
                       </button>
                     </div>
                   </div>
-                  
+
                   <transition name="fade">
-                    <span v-if="item.quantity >= item.availableQuantity" class="max-qty-warning">
+                    <span
+                      v-if="item.quantity >= item.availableQuantity"
+                      class="max-qty-warning"
+                    >
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
                       </svg>
-                      Max quantity reached
+                      Maximum quantity reached
                     </span>
                   </transition>
                 </div>
-                
+
                 <div class="item-actions">
                   <span class="item-total">${{ (item.price * item.quantity).toFixed(2) }}</span>
-                  <button class="remove-btn" @click="removeFromCart(item.id)">
+                  <button
+                    class="remove-btn"
+                    @click="removeFromCart(item.id)"
+                    aria-label="Remove item"
+                  >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="3,6 5,6 21,6"/>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                      <line x1="10" y1="11" x2="10" y2="17"/>
-                      <line x1="14" y1="11" x2="14" y2="17"/>
+                      <polyline points="3,6 5,6 21,6" />
+                      <path
+                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                      />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
                     </svg>
                     Remove
                   </button>
                 </div>
               </li>
             </TransitionGroup>
-          </div>
+          </section>
 
-          <!-- Order Summary -->
-          <div class="order-summary">
+          <aside class="order-summary">
             <div class="summary-card">
-              <h3 class="summary-title">Order Summary</h3>
-              
+              <h3 class="summary-title">Order summary</h3>
+
               <div class="summary-rows">
                 <div class="summary-row">
                   <span>Subtotal</span>
@@ -133,38 +159,38 @@
                 </div>
                 <div class="summary-row">
                   <span>Tax</span>
-                  <span>Calculated at checkout</span>
+                  <span class="muted">Calculated at checkout</span>
                 </div>
               </div>
-              
+
               <div class="summary-total">
                 <span>Total</span>
                 <span class="total-amount">${{ totalPrice.toFixed(2) }}</span>
               </div>
-              
-              <button 
+
+              <button
                 class="checkout-btn"
                 @click="checkout"
                 :disabled="isCheckingOut"
               >
                 <span v-if="!isCheckingOut">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                    <line x1="1" y1="10" x2="23" y2="10"/>
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                    <line x1="1" y1="10" x2="23" y2="10" />
                   </svg>
-                  Proceed to Checkout
+                  Proceed to checkout
                 </span>
-                <span v-else class="loading-spinner"></span>
+                <span v-else class="loading-spinner" aria-hidden="true"></span>
               </button>
-              
+
               <div class="secure-badge">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
                 <span>Secure checkout</span>
               </div>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </main>
@@ -219,6 +245,7 @@ export default {
 
     const updateLocalStorage = (): void => {
       localStorage.setItem('cart', JSON.stringify(cartItems.value))
+      window.dispatchEvent(new Event('storage'))
     }
 
     const handleInput = (item: CartItem): void => {
@@ -241,7 +268,9 @@ export default {
       const ids = cartItems.value.map((item) => item.id)
       try {
         const responses = await Promise.all(
-          ids.map((id) => axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`))
+          ids.map((id) =>
+            axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`)
+          )
         )
         responses.forEach((response, index) => {
           const item = cartItems.value[index]
@@ -263,7 +292,7 @@ export default {
 
     const checkout = async () => {
       isCheckingOut.value = true
-      
+
       const products = cartItems.value.map((item) => ({
         product_id: item.id,
         quantity: item.quantity
@@ -302,6 +331,7 @@ export default {
 
         localStorage.removeItem('cart')
         cartItems.value = []
+        window.dispatchEvent(new Event('storage'))
         router.push('/profile')
       } catch (error) {
         console.error('Error placing order:', error)
@@ -312,7 +342,10 @@ export default {
     }
 
     const totalPrice = computed((): number => {
-      return cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0)
+      return cartItems.value.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      )
     })
 
     onMounted(() => {
@@ -343,11 +376,11 @@ export default {
 <style scoped>
 .page-wrapper {
   min-height: 100vh;
-  padding-top: 80px;
+  padding-top: var(--header-height);
 }
 
 .main-content {
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-2xl) var(--space-lg) var(--space-3xl);
 }
 
 .container {
@@ -357,28 +390,65 @@ export default {
 
 /* Page Header */
 .page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
   margin-bottom: var(--space-xl);
-  animation: fadeInDown 0.5s ease;
+  animation: fadeInDown 0.4s ease;
+  flex-wrap: wrap;
 }
 
 .page-title {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  font-size: var(--font-size-3xl);
-  font-weight: 700;
-  margin-bottom: var(--space-sm);
+  gap: 12px;
+  font-size: clamp(1.75rem, 2vw + 1rem, 2.25rem);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
 }
 
-.page-title svg {
-  width: 36px;
-  height: 36px;
+.title-icon {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-soft);
   color: var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.title-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 .page-subtitle {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.btn-link:hover {
+  background: var(--color-surface-2);
+  color: var(--color-primary);
+}
+
+.btn-link svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Empty State */
@@ -389,16 +459,16 @@ export default {
   justify-content: center;
   padding: var(--space-3xl);
   text-align: center;
-  background: var(--color-bg-glass);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-2xl);
   animation: fadeInUp 0.5s ease;
 }
 
 .empty-icon {
-  width: 120px;
-  height: 120px;
-  background: var(--color-bg-card);
+  width: 110px;
+  height: 110px;
+  background: var(--color-surface-2);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -408,14 +478,14 @@ export default {
 }
 
 .empty-icon svg {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   color: var(--color-text-muted);
 }
 
 .empty-state h2 {
   font-size: var(--font-size-2xl);
-  margin-bottom: var(--space-sm);
+  margin-bottom: 6px;
 }
 
 .empty-state p {
@@ -424,28 +494,27 @@ export default {
 }
 
 .btn-primary {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-xl);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: white;
-  border: none;
+  gap: 8px;
+  padding: 12px var(--space-xl);
+  background: var(--color-primary);
+  color: #fff;
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
   font-weight: 600;
-  cursor: pointer;
   transition: all var(--transition-base);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .btn-primary svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
 }
 
 /* Cart Layout */
@@ -458,10 +527,11 @@ export default {
 
 /* Cart Items */
 .cart-items {
-  background: var(--color-bg-glass);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .items-list {
@@ -470,15 +540,18 @@ export default {
 
 .cart-item {
   display: grid;
-  grid-template-columns: 140px 1fr auto;
+  grid-template-columns: 120px 1fr auto;
   gap: var(--space-lg);
   padding: var(--space-lg);
-  background: var(--color-bg-card);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-md);
-  animation: fadeInUp 0.5s ease backwards;
+  animation: fadeInUp 0.4s ease backwards;
   animation-delay: var(--delay);
-  transition: all var(--transition-base);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .cart-item:last-child {
@@ -486,22 +559,23 @@ export default {
 }
 
 .cart-item:hover {
-  background: var(--color-bg-glass);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-sm);
 }
 
 .item-image {
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--color-bg-secondary);
+  background: var(--color-surface-2);
 }
 
 .item-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-base);
+  transition: transform var(--transition-slow);
 }
 
 .cart-item:hover .item-image img {
@@ -511,12 +585,14 @@ export default {
 .item-details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 8px;
+  min-width: 0;
 }
 
 .item-name {
   font-size: var(--font-size-lg);
   font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
 .item-description {
@@ -533,61 +609,61 @@ export default {
   align-items: center;
   gap: var(--space-lg);
   margin-top: auto;
+  flex-wrap: wrap;
 }
 
 .item-price {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   font-weight: 600;
-  color: var(--color-primary-light);
+  color: var(--color-text-strong);
 }
 
 .quantity-control {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  background: var(--color-bg-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: var(--space-xs);
+  padding: 4px;
+  gap: 2px;
 }
 
 .qty-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
   color: var(--color-text);
-  cursor: pointer;
+  border-radius: 6px;
   transition: all var(--transition-fast);
 }
 
 .qty-btn:hover:not(:disabled) {
   background: var(--color-primary);
-  color: white;
+  color: #fff;
 }
 
 .qty-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
 .qty-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .qty-input {
-  width: 50px;
-  padding: var(--space-xs);
+  width: 44px;
+  padding: 4px;
   background: transparent;
-  border: none;
   color: var(--color-text);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   text-align: center;
+  border: none;
   -moz-appearance: textfield;
 }
 
@@ -600,7 +676,7 @@ export default {
 .max-qty-warning {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 4px;
   font-size: var(--font-size-xs);
   color: var(--color-warning);
 }
@@ -614,35 +690,36 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: var(--space-md);
+  gap: 12px;
 }
 
 .item-total {
   font-size: var(--font-size-xl);
   font-weight: 700;
+  color: var(--color-text-strong);
 }
 
 .remove-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
+  gap: 6px;
+  padding: 6px 12px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  cursor: pointer;
+  font-weight: 500;
   transition: all var(--transition-fast);
 }
 
 .remove-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .remove-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--color-error-soft);
   border-color: var(--color-error);
   color: var(--color-error);
 }
@@ -650,20 +727,22 @@ export default {
 /* Order Summary */
 .order-summary {
   position: sticky;
-  top: 100px;
+  top: calc(var(--header-height) + var(--space-md));
 }
 
 .summary-card {
-  background: var(--color-bg-glass);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: var(--space-xl);
+  box-shadow: var(--shadow-sm);
   animation: fadeInRight 0.5s ease;
 }
 
 .summary-title {
   font-size: var(--font-size-xl);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin-bottom: var(--space-lg);
   padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--color-border);
@@ -672,7 +751,7 @@ export default {
 .summary-rows {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 12px;
   margin-bottom: var(--space-lg);
 }
 
@@ -683,9 +762,13 @@ export default {
   font-size: var(--font-size-sm);
 }
 
+.summary-row .muted {
+  color: var(--color-text-muted);
+}
+
 .free-shipping {
   color: var(--color-success);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .summary-total {
@@ -693,70 +776,71 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: var(--space-lg) 0;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+  border-top: 1px dashed var(--color-border);
+  border-bottom: 1px dashed var(--color-border);
   margin-bottom: var(--space-lg);
 }
 
 .summary-total span:first-child {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   font-weight: 600;
+  color: var(--color-text-strong);
 }
 
 .total-amount {
   font-size: var(--font-size-2xl);
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
 }
 
 .checkout-btn {
   width: 100%;
-  padding: var(--space-md);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: white;
-  border: none;
+  padding: 14px;
+  background: var(--color-primary);
+  color: #fff;
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
   font-weight: 600;
-  cursor: pointer;
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .checkout-btn span {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
+  gap: 8px;
 }
 
 .checkout-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .checkout-btn::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
 .checkout-btn:hover:not(:disabled)::before {
-  left: 100%;
+  transform: translateX(100%);
 }
 
 .checkout-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
 }
 
 .checkout-btn:disabled {
@@ -768,24 +852,26 @@ export default {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: white;
+  border-top-color: #fff;
   animation: spin 0.8s linear infinite;
 }
 
 .secure-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
+  gap: 8px;
+  width: 100%;
   margin-top: var(--space-md);
-  padding: var(--space-md);
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 10px;
+  background: var(--color-success-soft);
+  border: 1px solid color-mix(in srgb, var(--color-success) 35%, transparent);
   border-radius: var(--radius-md);
   color: var(--color-success);
   font-size: var(--font-size-sm);
+  font-weight: 500;
 }
 
 .secure-badge svg {
@@ -820,38 +906,42 @@ export default {
 }
 
 /* Responsive */
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .cart-layout {
     grid-template-columns: 1fr;
   }
-  
+
   .order-summary {
     position: static;
   }
 }
 
 @media (max-width: 640px) {
+  .main-content {
+    padding: var(--space-xl) var(--space-md);
+  }
+
   .cart-item {
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 96px 1fr;
     grid-template-rows: auto auto;
   }
-  
+
   .item-image {
-    width: 100px;
-    height: 100px;
+    width: 96px;
+    height: 96px;
   }
-  
+
   .item-actions {
     grid-column: 1 / -1;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .item-meta {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-sm);
+    gap: 12px;
   }
 }
 </style>
